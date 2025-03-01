@@ -667,7 +667,7 @@ import zoneinfo, dateutil.tz
 <TD>     = <DTa>     - <DTa>                # Ignores jumps if they share tzinfo object.
 <D/DT>   = <D/DT>    ± <TD>                 # Returned datetime can fall into missing hour.
 <TD>     = <TD>      * <float>              # Also `<TD> = abs(<TD>)`, `<TD> = <TD> ± <TD>`.
-<float>  = <TD>      / <TD>                 # Also `<int>, <TD> = divmod(<TD>, <TD>)`.
+<float>  = <TD>      / <TD>                 # Also `(<int>, <TD>) = divmod(<TD>, <TD>)`.
 ```
 
 
@@ -932,7 +932,7 @@ from functools import cache
 def fib(n):
     return n if n < 2 else fib(n-2) + fib(n-1)
 ```
-* **Potential problem with cache is that it can grow indefinitely. To clear stored values run `'fib.cache_clear()'`, or use `'@lru_cache(maxsize=<int>)'` decorator instead.**
+* **Potential problem with cache is that it can grow indefinitely. To clear stored values run `'<func>.cache_clear()'`, or use `'@lru_cache(maxsize=<int>)'` decorator instead.**
 * **CPython interpreter limits recursion depth to 3000 by default. To increase it run `'sys.setrecursionlimit(<int>)'`.**
 
 ### Parametrized Decorator
@@ -1685,15 +1685,15 @@ from pathlib import Path
 <Path> = Path()                     # Returns relative CWD. Also Path('.').
 <Path> = Path.cwd()                 # Returns absolute CWD. Also Path().resolve().
 <Path> = Path.home()                # Returns user's home directory (absolute).
-<Path> = Path(__file__).resolve()   # Returns script's path if CWD wasn't changed.
+<Path> = Path(__file__).resolve()   # Returns module's path if CWD wasn't changed.
 ```
 
 ```python
 <Path> = <Path>.parent              # Returns Path without the final component.
 <str>  = <Path>.name                # Returns final component as a string.
-<str>  = <Path>.stem                # Returns final component without extension.
-<str>  = <Path>.suffix              # Returns final component's extension.
-<tup.> = <Path>.parts               # Returns all components as strings.
+<str>  = <Path>.stem                # Returns final component w/o last extension.
+<str>  = <Path>.suffix              # Returns last extension prepended with a dot.
+<tup.> = <Path>.parts               # Returns all path's components as strings.
 ```
 
 ```python
@@ -2419,8 +2419,7 @@ import matplotlib.pyplot as plt
 plt.plot/bar/scatter(x_data, y_data [, label=<str>])  # Also plt.plot(y_data).
 plt.legend()                                          # Adds a legend.
 plt.title/xlabel/ylabel(<str>)                        # Adds a title or label.
-plt.savefig(<path>)                                   # Saves the plot.
-plt.show()                                            # Displays the plot.
+plt.show()                                            # Also plt.savefig(<path>).
 plt.clf()                                             # Clears the plot.
 ```
 
@@ -2443,7 +2442,7 @@ Console App
 ```python
 # $ pip3 install windows-curses
 import curses, os
-from curses import A_REVERSE, KEY_DOWN, KEY_UP, KEY_LEFT, KEY_RIGHT, KEY_ENTER
+from curses import A_REVERSE, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_ENTER
 
 def main(screen):
     ch, first, selected, paths = 0, 0, 0, os.listdir()
@@ -2454,9 +2453,10 @@ def main(screen):
             color = A_REVERSE if filename == paths[selected] else 0
             screen.addnstr(y, 0, filename, width-1, color)
         ch = screen.getch()
-        selected += (ch == KEY_DOWN) - (ch == KEY_UP)
-        selected = max(0, min(len(paths)-1, selected))
-        first += (selected >= first + height) - (selected < first)
+        selected -= (ch == KEY_UP) and (selected > 0)
+        selected += (ch == KEY_DOWN) and (selected < len(paths)-1)
+        first = min(first, selected)
+        first = max(first, selected - (height-1))
         if ch in [KEY_LEFT, KEY_RIGHT, KEY_ENTER, ord('\n'), ord('\r')]:
             new_dir = '..' if ch == KEY_LEFT else paths[selected]
             if os.path.isdir(new_dir):
@@ -2563,7 +2563,7 @@ app.run(host=None, port=None, debug=None)  # Or: $ flask --app FILE run [--ARG[=
 ```python
 @app.route('/img/<path:filename>')
 def serve_file(filename):
-    return fl.send_from_directory('DIRNAME/', filename)
+    return fl.send_from_directory('DIRNAME', filename)
 ```
 
 ### Dynamic Request
@@ -3062,7 +3062,7 @@ rect(<Surf>, color, <Rect>, width=0)            # Also polygon(<Surf>, color, po
 ### Sound
 ```python
 <Sound> = pg.mixer.Sound(<path/file/bytes>)     # WAV file or bytes/array of signed shorts.
-<Sound>.play/stop()                             # Also set_volume(<float>), fadeout(msec).
+<Sound>.play/stop()                             # Also set_volume(<float>) and fadeout(msec).
 ```
 
 ### Basic Mario Brothers Example
@@ -3549,7 +3549,7 @@ cdef class <class_name>:
 
 ```perl
 $ python3 -m venv NAME      # Creates virtual environment in current directory.
-$ source NAME/bin/activate  # Activates env. On Windows run `NAME\Scripts\activate`.
+$ source NAME/bin/activate  # Activates it. On Windows run `NAME\Scripts\activate`.
 $ pip3 install LIBRARY      # Installs the library into active environment.
 $ python3 FILE              # Runs the script in active environment. Also `./FILE`.
 $ deactivate                # Deactivates the active virtual environment.

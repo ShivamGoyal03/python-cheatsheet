@@ -56,7 +56,7 @@
 
 <body>
   <header>
-    <aside>February 19, 2025</aside>
+    <aside>February 28, 2025</aside>
     <a href="https://gto76.github.io" rel="author">Jure Šorn</a>
   </header>
 
@@ -595,7 +595,7 @@ Point(x=<span class="hljs-number">1</span>, y=<span class="hljs-number">2</span>
 &lt;TD&gt;     = &lt;DTa&gt;     - &lt;DTa&gt;                <span class="hljs-comment"># Ignores jumps if they share tzinfo object.</span>
 &lt;D/DT&gt;   = &lt;D/DT&gt;    ± &lt;TD&gt;                 <span class="hljs-comment"># Returned datetime can fall into missing hour.</span>
 &lt;TD&gt;     = &lt;TD&gt;      * &lt;float&gt;              <span class="hljs-comment"># Also `&lt;TD&gt; = abs(&lt;TD&gt;)`, `&lt;TD&gt; = &lt;TD&gt; ± &lt;TD&gt;`.</span>
-&lt;float&gt;  = &lt;TD&gt;      / &lt;TD&gt;                 <span class="hljs-comment"># Also `&lt;int&gt;, &lt;TD&gt; = divmod(&lt;TD&gt;, &lt;TD&gt;)`.</span>
+&lt;float&gt;  = &lt;TD&gt;      / &lt;TD&gt;                 <span class="hljs-comment"># Also `(&lt;int&gt;, &lt;TD&gt;) = divmod(&lt;TD&gt;, &lt;TD&gt;)`.</span>
 </code></pre></div>
 
 <div><h2 id="arguments"><a href="#arguments" name="arguments">#</a>Arguments</h2><div><h3 id="insidefunctioncall">Inside Function Call</h3><pre><code class="python language-python hljs">func(&lt;positional_args&gt;)                           <span class="hljs-comment"># func(0, 0)</span>
@@ -789,7 +789,7 @@ player = Player(point, direction)                   <span class="hljs-comment">#
 
 
 <ul>
-<li><strong>Potential problem with cache is that it can grow indefinitely. To clear stored values run <code class="python hljs"><span class="hljs-string">'fib.cache_clear()'</span></code>, or use <code class="python hljs"><span class="hljs-string">'@lru_cache(maxsize=&lt;int&gt;)'</span></code> decorator instead.</strong></li>
+<li><strong>Potential problem with cache is that it can grow indefinitely. To clear stored values run <code class="python hljs"><span class="hljs-string">'&lt;func&gt;.cache_clear()'</span></code>, or use <code class="python hljs"><span class="hljs-string">'@lru_cache(maxsize=&lt;int&gt;)'</span></code> decorator instead.</strong></li>
 <li><strong>CPython interpreter limits recursion depth to 3000 by default. To increase it run <code class="python hljs"><span class="hljs-string">'sys.setrecursionlimit(&lt;int&gt;)'</span></code>.</strong></li>
 </ul>
 <div><h3 id="parametrizeddecorator">Parametrized Decorator</h3><p><strong>A decorator that accepts arguments and returns a normal decorator that accepts a function.</strong></p><pre><code class="python language-python hljs"><span class="hljs-keyword">from</span> functools <span class="hljs-keyword">import</span> wraps
@@ -1427,13 +1427,13 @@ args  = p.parse_args()                                            <span class="h
 <pre><code class="python language-python hljs">&lt;Path&gt; = Path()                     <span class="hljs-comment"># Returns relative CWD. Also Path('.').</span>
 &lt;Path&gt; = Path.cwd()                 <span class="hljs-comment"># Returns absolute CWD. Also Path().resolve().</span>
 &lt;Path&gt; = Path.home()                <span class="hljs-comment"># Returns user's home directory (absolute).</span>
-&lt;Path&gt; = Path(__file__).resolve()   <span class="hljs-comment"># Returns script's path if CWD wasn't changed.</span>
+&lt;Path&gt; = Path(__file__).resolve()   <span class="hljs-comment"># Returns module's path if CWD wasn't changed.</span>
 </code></pre>
 <pre><code class="python language-python hljs">&lt;Path&gt; = &lt;Path&gt;.parent              <span class="hljs-comment"># Returns Path without the final component.</span>
 &lt;str&gt;  = &lt;Path&gt;.name                <span class="hljs-comment"># Returns final component as a string.</span>
-&lt;str&gt;  = &lt;Path&gt;.stem                <span class="hljs-comment"># Returns final component without extension.</span>
-&lt;str&gt;  = &lt;Path&gt;.suffix              <span class="hljs-comment"># Returns final component's extension.</span>
-&lt;tup.&gt; = &lt;Path&gt;.parts               <span class="hljs-comment"># Returns all components as strings.</span>
+&lt;str&gt;  = &lt;Path&gt;.stem                <span class="hljs-comment"># Returns final component w/o last extension.</span>
+&lt;str&gt;  = &lt;Path&gt;.suffix              <span class="hljs-comment"># Returns last extension prepended with a dot.</span>
+&lt;tup.&gt; = &lt;Path&gt;.parts               <span class="hljs-comment"># Returns all path's components as strings.</span>
 </code></pre>
 <pre><code class="python language-python hljs">&lt;iter&gt; = &lt;Path&gt;.iterdir()           <span class="hljs-comment"># Returns directory contents as Path objects.</span>
 &lt;iter&gt; = &lt;Path&gt;.glob(<span class="hljs-string">'&lt;pattern&gt;'</span>)   <span class="hljs-comment"># Returns Paths matching the wildcard pattern.</span>
@@ -1990,8 +1990,7 @@ Processing: 100%|████████████████████| 3
 plt.plot/bar/scatter(x_data, y_data [, label=&lt;str&gt;])  <span class="hljs-comment"># Also plt.plot(y_data).</span>
 plt.legend()                                          <span class="hljs-comment"># Adds a legend.</span>
 plt.title/xlabel/ylabel(&lt;str&gt;)                        <span class="hljs-comment"># Adds a title or label.</span>
-plt.savefig(&lt;path&gt;)                                   <span class="hljs-comment"># Saves the plot.</span>
-plt.show()                                            <span class="hljs-comment"># Displays the plot.</span>
+plt.show()                                            <span class="hljs-comment"># Also plt.savefig(&lt;path&gt;).</span>
 plt.clf()                                             <span class="hljs-comment"># Clears the plot.</span>
 </code></pre></div>
 
@@ -2005,7 +2004,7 @@ print(tabulate.tabulate(rows, headers=<span class="hljs-string">'firstrow'</span
 
 <div><h2 id="consoleapp"><a href="#consoleapp" name="consoleapp">#</a>Console App</h2><div><h4 id="runsabasicfileexplorerintheconsole">Runs a basic file explorer in the console:</h4><pre><code class="python language-python hljs"><span class="hljs-comment"># $ pip3 install windows-curses</span>
 <span class="hljs-keyword">import</span> curses, os
-<span class="hljs-keyword">from</span> curses <span class="hljs-keyword">import</span> A_REVERSE, KEY_DOWN, KEY_UP, KEY_LEFT, KEY_RIGHT, KEY_ENTER
+<span class="hljs-keyword">from</span> curses <span class="hljs-keyword">import</span> A_REVERSE, KEY_UP, KEY_DOWN, KEY_LEFT, KEY_RIGHT, KEY_ENTER
 
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">main</span><span class="hljs-params">(screen)</span>:</span>
     ch, first, selected, paths = <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, <span class="hljs-number">0</span>, os.listdir()
@@ -2016,9 +2015,10 @@ print(tabulate.tabulate(rows, headers=<span class="hljs-string">'firstrow'</span
             color = A_REVERSE <span class="hljs-keyword">if</span> filename == paths[selected] <span class="hljs-keyword">else</span> <span class="hljs-number">0</span>
             screen.addnstr(y, <span class="hljs-number">0</span>, filename, width-<span class="hljs-number">1</span>, color)
         ch = screen.getch()
-        selected += (ch == KEY_DOWN) - (ch == KEY_UP)
-        selected = max(<span class="hljs-number">0</span>, min(len(paths)-<span class="hljs-number">1</span>, selected))
-        first += (selected &gt;= first + height) - (selected &lt; first)
+        selected -= (ch == KEY_UP) <span class="hljs-keyword">and</span> (selected &gt; <span class="hljs-number">0</span>)
+        selected += (ch == KEY_DOWN) <span class="hljs-keyword">and</span> (selected &lt; len(paths)-<span class="hljs-number">1</span>)
+        first = min(first, selected)
+        first = max(first, selected - (height-<span class="hljs-number">1</span>))
         <span class="hljs-keyword">if</span> ch <span class="hljs-keyword">in</span> [KEY_LEFT, KEY_RIGHT, KEY_ENTER, ord(<span class="hljs-string">'\n'</span>), ord(<span class="hljs-string">'\r'</span>)]:
             new_dir = <span class="hljs-string">'..'</span> <span class="hljs-keyword">if</span> ch == KEY_LEFT <span class="hljs-keyword">else</span> paths[selected]
             <span class="hljs-keyword">if</span> os.path.isdir(new_dir):
@@ -2107,7 +2107,7 @@ app.run(host=<span class="hljs-keyword">None</span>, port=<span class="hljs-keyw
 </ul>
 <div><h3 id="staticrequest">Static Request</h3><pre><code class="python language-python hljs"><span class="hljs-meta">@app.route('/img/&lt;path:filename&gt;')</span>
 <span class="hljs-function"><span class="hljs-keyword">def</span> <span class="hljs-title">serve_file</span><span class="hljs-params">(filename)</span>:</span>
-    <span class="hljs-keyword">return</span> fl.send_from_directory(<span class="hljs-string">'DIRNAME/'</span>, filename)
+    <span class="hljs-keyword">return</span> fl.send_from_directory(<span class="hljs-string">'DIRNAME'</span>, filename)
 </code></pre></div>
 
 <div><h3 id="dynamicrequest">Dynamic Request</h3><pre><code class="python language-python hljs"><span class="hljs-meta">@app.route('/&lt;sport&gt;')</span>
@@ -2501,7 +2501,7 @@ rect(&lt;Surf&gt;, color, &lt;Rect&gt;, width=<span class="hljs-number">0</span>
 &lt;Surf&gt; = &lt;Font&gt;.render(text, antialias, color)  <span class="hljs-comment"># Background color can be specified at the end.</span>
 </code></pre>
 <div><h3 id="sound">Sound</h3><pre><code class="python language-python hljs">&lt;Sound&gt; = pg.mixer.Sound(&lt;path/file/bytes&gt;)     <span class="hljs-comment"># WAV file or bytes/array of signed shorts.</span>
-&lt;Sound&gt;.play/stop()                             <span class="hljs-comment"># Also set_volume(&lt;float&gt;), fadeout(msec).</span>
+&lt;Sound&gt;.play/stop()                             <span class="hljs-comment"># Also set_volume(&lt;float&gt;) and fadeout(msec).</span>
 </code></pre></div>
 
 <div><h3 id="basicmariobrothersexample">Basic Mario Brothers Example</h3><pre><code class="python language-python hljs"><span class="hljs-keyword">import</span> collections, dataclasses, enum, io, itertools <span class="hljs-keyword">as</span> it, pygame <span class="hljs-keyword">as</span> pg, urllib.request
@@ -2898,7 +2898,7 @@ px.line(df, x=<span class="hljs-string">'Date'</span>, y=<span class="hljs-strin
         self.&lt;attr_name&gt; = &lt;arg_name&gt;
 </code></pre>
 <div><h3 id="virtualenvironments">Virtual Environments</h3><p><strong>System for installing libraries directly into project's directory.</strong></p><pre><code class="python hljs">$ python3 -m venv NAME      <span class="hljs-comment"># Creates virtual environment in current directory.</span>
-$ source NAME/bin/activate  <span class="hljs-comment"># Activates env. On Windows run `NAME\Scripts\activate`.</span>
+$ source NAME/bin/activate  <span class="hljs-comment"># Activates it. On Windows run `NAME\Scripts\activate`.</span>
 $ pip3 install LIBRARY      <span class="hljs-comment"># Installs the library into active environment.</span>
 $ python3 FILE              <span class="hljs-comment"># Runs the script in active environment. Also `./FILE`.</span>
 $ deactivate                <span class="hljs-comment"># Deactivates the active virtual environment.</span>
@@ -2942,7 +2942,7 @@ $ deactivate                <span class="hljs-comment"># Deactivates the active 
  
 
   <footer>
-    <aside>February 19, 2025</aside>
+    <aside>February 28, 2025</aside>
     <a href="https://gto76.github.io" rel="author">Jure Šorn</a>
   </footer>
 
