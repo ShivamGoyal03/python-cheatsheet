@@ -999,7 +999,7 @@ raise Exception(<obj>)
 print/str/repr([<obj>])
 print/str/repr({<obj>: <obj>})
 f'{<obj>!r}'
-Z = dataclasses.make_dataclass('Z', ['a']); print/str/repr(Z(<obj>))
+Z = make_dataclass('Z', ['a']); print/str/repr(Z(<obj>))
 >>> <obj>
 ```
 
@@ -1034,9 +1034,9 @@ class C(A, B): pass
 ```python
 from collections import abc
 
-<name>: <type> [| ...] [= <obj>]                              # `|` since 3.10.
-<name>: list/set/abc.Iterable/abc.Sequence[<type>] [= <obj>]  # Since 3.9.
-<name>: dict/tuple[<type>, ...] [= <obj>]                     # Since 3.9.
+<name>: <type> [| ...] [= <obj>]
+<name>: list/set/abc.Iterable/abc.Sequence[<type>] [= <obj>]
+<name>: dict/tuple[<type>, ...] [= <obj>]
 ```
 
 ### Dataclass
@@ -1056,9 +1056,9 @@ class <class_name>:
 * **For attributes of arbitrary type use `'typing.Any'`.**
 
 ```python
-Point = make_dataclass('Point', ['x', 'y'])
-Point = make_dataclass('Point', [('x', float), ('y', float)])
-Point = make_dataclass('Point', [('x', float, 0), ('y', float, 0)])
+P = make_dataclass('P', ['x', 'y'])
+P = make_dataclass('P', [('x', float), ('y', float)])
+P = make_dataclass('P', [('x', float, 0), ('y', float, 0)])
 ```
 
 ### Property
@@ -2078,7 +2078,7 @@ Memory View
 ```
 
 ```python
-<list>  = list(<mview>)                        # Returns a list of ints, floats, or bytes.
+<list>  = list(<mview>)                        # Returns a list of ints, floats or bytes.
 <str>   = str(<mview>, 'utf-8')                # Treats memoryview as a bytes object.
 <str>   = <mview>.hex()                        # Returns hex pairs. Accepts `sep=<str>`.
 ```
@@ -2103,7 +2103,7 @@ from collections import deque
 
 Operator
 --------
-**Module of functions that provide the functionality of operators. Functions are ordered and grouped by operator precedence, from least to most binding. Logical and arithmetic operators in lines 1, 3 and 5 are also ordered by precedence within their own group.**
+**Module of functions that provide the functionality of operators. Functions are grouped by operator precedence, from least to most binding. Functions and operators in lines 1, 3 and 5 are also ordered by precedence within a group.**
 ```python
 import operator as op
 ```
@@ -2828,11 +2828,11 @@ img.show()
 from PIL import ImageDraw
 <Draw> = ImageDraw.Draw(<Image>)                # Object for adding 2D graphics to the image.
 <Draw>.point((x, y))                            # Draws a point. Truncates floats into ints.
-<Draw>.line((x1, y1, x2, y2 [, ...]))           # To get anti-aliasing use Image's resize().
+<Draw>.line((x1, y1, x2, y2 [, ...]))           # For anti-aliasing use <Image>.resize((w, h)).
 <Draw>.arc((x1, y1, x2, y2), deg1, deg2)        # Draws in clockwise dir. Also pieslice().
 <Draw>.rectangle((x1, y1, x2, y2))              # Also rounded_rectangle(), regular_polygon().
-<Draw>.polygon((x1, y1, x2, y2, ...))           # Last point gets connected to the first.
-<Draw>.ellipse((x1, y1, x2, y2))                # To rotate use Image's rotate() and paste().
+<Draw>.polygon((x1, y1, x2, y2, ...))           # Last point gets connected to the first one.
+<Draw>.ellipse((x1, y1, x2, y2))                # To rotate use <Image>.rotate(anticlock_deg).
 <Draw>.text((x, y), <str>, font=<Font>)         # `<Font> = ImageFont.truetype(<path>, size)`.
 ```
 * **Use `'fill=<color>'` to set the primary color.**
@@ -2942,7 +2942,7 @@ write_to_wav_file('test.wav', samples_f)
 from random import uniform
 samples_f, params = read_wav_file('test.wav')
 samples_f = (f + uniform(-0.05, 0.05) for f in samples_f)
-write_to_wav_file('test.wav', samples_f, params)
+write_to_wav_file('test.wav', samples_f, p=params)
 ```
 
 #### Plays the WAV file:
@@ -3201,7 +3201,7 @@ Name: a, dtype: int64
 
 #### Series — Aggregate, Transform, Map:
 ```python
-<el> = <S>.sum/max/mean/idxmax/all/count()     # Or: <S>.agg(lambda <S>: <el>)
+<el> = <S>.sum/max/mean/std/idxmax/count()     # Or: <S>.agg(lambda <S>: <el>)
 <S>  = <S>.rank/diff/cumsum/ffill/interpol…()  # Or: <S>.agg/transform(lambda <S>: <S>)
 <S>  = <S>.isna/fillna/isin([<el/coll>])       # Or: <S>.agg/transform/map(lambda <el>: <el>)
 ```
@@ -3314,7 +3314,7 @@ c  6  7
 
 #### DataFrame — Aggregate, Transform, Map:
 ```python
-<S>  = <DF>.sum/max/mean/idxmax/all/count()    # Or: <DF>.apply/agg(lambda <S>: <el>)
+<S>  = <DF>.sum/max/mean/std/idxmax/count()    # Or: <DF>.apply/agg(lambda <S>: <el>)
 <DF> = <DF>.rank/diff/cumsum/ffill/interpo…()  # Or: <DF>.apply/agg/transform(lambda <S>: <S>)
 <DF> = <DF>.isna/fillna/isin([<el/coll>])      # Or: <DF>.applymap(lambda <el>: <el>)
 ```
@@ -3355,18 +3355,19 @@ c  6  7
 <S/DF> = pd.read_json/pickle(<path/url/file>)  # Also io.StringIO(<str>), io.BytesIO(<bytes>).
 <DF>   = pd.read_csv/excel(<path/url/file>)    # Also `header/index_col/dtype/usecols/…=<obj>`.
 <list> = pd.read_html(<path/url/file>)         # Raises ImportError if webpage has zero tables.
-<S/DF> = pd.read_parquet/feather/hdf(<path…>)  # Read_hdf() accepts `key=<s/df_name>` argument.
+<S/DF> = pd.read_parquet/feather/hdf(<path…>)  # Function read_hdf() accepts `key=<s/df_name>`.
 <DF>   = pd.read_sql('<table/query>', <conn>)  # Pass SQLite3/Alchemy connection (see #SQLite).
 ```
 
 ```python
 <DF>.to_json/csv/html/parquet/latex(<path>)    # Returns a string/bytes if path is omitted.
-<DF>.to_pickle/excel/feather/hdf(<path>)       # To_hdf() requires `key=<s/df_name>` argument.
+<DF>.to_pickle/excel/feather/hdf(<path>)       # Method to_hdf() requires `key=<s/df_name>`.
 <DF>.to_sql('<table_name>', <connection>)      # Also `if_exists='fail/replace/append'`.
 ```
 * **`'$ pip3 install "pandas[excel]" odfpy lxml pyarrow'` installs dependencies.**
-* **Read\_csv() only parses dates of columns that were specified by 'parse\_dates' argument. It automatically tries to detect the format, but it can be helped with 'date\_format' or 'dayfirst' arguments. Both dates and datetimes get stored as pd.Timestamp objects.**
-* **If 'parse\_dates' and 'index_col' are the same column, we get a DF with DatetimeIndex. Its `'resample("y/m/d/h")'` method returns a Resampler object that is similar to GroupBy.**
+* **Csv functions use the same dialect as standard library's csv module (e.g. `'sep=","'`).**
+* **Read\_csv() only parses dates of columns that are listed in 'parse\_dates'. It automatically tries to detect the format, but it can be helped with 'date\_format' or 'dayfirst' arguments.**
+* **We get a dataframe with DatetimeIndex if 'parse_dates' argument includes 'index\_col'. Its `'resample("y/m/d/h")'` method returns Resampler object that is similar to GroupBy.**
 
 ### GroupBy
 **Object that groups together rows of a dataframe based on the value of the passed column.**
@@ -3380,7 +3381,7 @@ c  6  7
 ```
 
 ```python
-<DF> = <GB>.sum/max/mean/idxmax/all()          # Or: <GB>.agg(lambda <S>: <el>)
+<DF> = <GB>.sum/max/mean/std/idxmax/count()    # Or: <GB>.agg(lambda <S>: <el>)
 <DF> = <GB>.rank/diff/cumsum/ffill()           # Or: <GB>.transform(lambda <S>: <S>)
 <DF> = <GB>.fillna(<el>)                       # Or: <GB>.transform(lambda <S>: <S>)
 ```
@@ -3419,16 +3420,16 @@ import plotly.express as px, pandas as pd
 ```
 
 ```python
-<Fig> = px.line(<DF>, x=col_key, y=col_key)            # Or: px.line(x=<list>, y=<list>)
-<Fig>.update_layout(margin=dict(t=0, r=0, b=0, l=0))   # Also `paper_bgcolor='rgb(0, 0, 0)'`.
-<Fig>.write_html/json/image('<path>')                  # <Fig>.show() displays the plot.
+<Fig> = px.line(<DF>, x=col_key, y=col_key)           # Or: px.line(x=<list>, y=<list>)
+<Fig>.update_layout(margin=dict(t=0, r=0, b=0, l=0))  # Also `paper_bgcolor='rgb(0, 0, 0)'`.
+<Fig>.write_html/json/image('<path>')                 # <Fig>.show() displays the plot.
 ```
 
 ```python
-<Fig> = px.area/bar/box(<DF>, x=col_key, y=col_key)    # Also `color=col_key`.
-<Fig> = px.scatter(<DF>, x=col_key, y=col_key)         # Also `color/size/symbol=col_key`.
-<Fig> = px.scatter_3d(<DF>, x=col_key, y=col_key, …)   # `z=col_key`. Also color/size/symbol.
-<Fig> = px.histogram(<DF>, x=col_key [, nbins=<int>])  # Number of bins depends on DF size.
+<Fig> = px.area/bar/box(<DF>, x=col_key, y=col_key)   # Also `color=col_key`.
+<Fig> = px.scatter(<DF>, x=col_key, y=col_key)        # Also `color/size/symbol=col_key`.
+<Fig> = px.scatter_3d(<DF>, x=col_key, y=col_key, …)  # `z=col_key`. Also color/size/symbol.
+<Fig> = px.histogram(<DF>, x=col_key)                 # Also `nbins=<int>`.
 ```
 
 #### Displays a line chart of total coronavirus deaths per million grouped by continent:
@@ -3439,7 +3440,7 @@ import plotly.express as px, pandas as pd
 ```python
 covid = pd.read_csv('https://raw.githubusercontent.com/owid/covid-19-data/8dde8ca49b'
                     '6e648c17dd420b2726ca0779402651/public/data/owid-covid-data.csv',
-                    usecols=['iso_code', 'date', 'total_deaths', 'population'])
+                    usecols=['iso_code', 'date', 'population', 'total_deaths'])
 continents = pd.read_csv('https://gto76.github.io/python-cheatsheet/web/continents.csv',
                          usecols=['Three_Letter_Country_Code', 'Continent_Name'])
 df = pd.merge(covid, continents, left_on='iso_code', right_on='Three_Letter_Country_Code')
@@ -3453,11 +3454,11 @@ px.line(df, x='Date', y='Total Deaths per Million', color='Continent').show()
 #### Displays a multi-axis line chart of total coronavirus cases and changes in prices of Bitcoin, Dow Jones and gold:
 
 ![Covid Cases](web/covid_cases.png)
-<div id="e23ccacc-a456-478b-b467-7282a2165921" class="plotly-graph-div" style="height:287px; width:935px;"></div>
+<div id="e23ccacc-a456-478b-b467-7282a2165921" class="plotly-graph-div" style="height:285px; width:935px;"></div>
 
 ```python
 # $ pip3 install pandas lxml selenium plotly
-import pandas as pd, selenium.webdriver, plotly.graph_objects as go
+import pandas as pd, selenium.webdriver, io, plotly.graph_objects as go
 
 def main():
     covid, (bitcoin, gold, dow) = get_covid_cases(), get_tickers()
@@ -3466,7 +3467,7 @@ def main():
 
 def get_covid_cases():
     url = 'https://covid.ourworldindata.org/data/owid-covid-data.csv'
-    df = pd.read_csv(url, usecols=['location', 'date', 'total_cases'], parse_dates=['date'])
+    df = pd.read_csv(url, parse_dates=['date'])
     df = df[df.location == 'World']
     s = df.set_index('date').total_cases
     return s.rename('Total Cases')
@@ -3482,7 +3483,8 @@ def get_ticker(driver, name, symbol):
     driver.get(url + '?period1=1579651200&period2=9999999999')
     if buttons := driver.find_elements('xpath', '//button[@name="reject"]'):
         buttons[0].click()
-    dataframes = pd.read_html(driver.page_source, parse_dates=['Date'])
+    html = io.StringIO(driver.page_source)
+    dataframes = pd.read_html(html, parse_dates=['Date'])
     s = dataframes[0].set_index('Date').Open
     return s.rename(name)
 
@@ -3529,7 +3531,7 @@ import <cython_script>                 # Script must be saved with '.pyx' extens
 
 #### Definitions:
 * **All `'cdef'` definitions are optional, but they contribute to the speed-up.**
-* **Also supports C pointers via `'*'` and `'&'`, structs, unions, and enums.**
+* **Also supports C pointers (via `'*'` and `'&'`), structs, unions and enums.**
 
 ```python
 cdef <ctype/type> <var_name> [= <obj>]
